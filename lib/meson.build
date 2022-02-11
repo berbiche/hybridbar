@@ -2,6 +2,7 @@ config_vapi = meson.get_compiler('vala').find_library('config', dirs: meson.curr
 
 config_data = configuration_data()
 config_data.set_quoted('INDICATORS_DIR', indicators_dir)
+config_data.set_quoted('ROOT_RESTRICTIONS_FOLDER', '/etc/wingpanel.d/')
 
 config_header = configure_file(
     configuration: config_data,

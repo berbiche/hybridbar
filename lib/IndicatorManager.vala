@@ -95,7 +95,7 @@ public class Wingpanel.IndicatorManager : GLib.Object {
         this.server_type = server_type;
 
         /* load inclusion/exclusion lists */
-        var root_restrictions_folder = File.new_for_path ("/etc/wingpanel.d/");
+        var root_restrictions_folder = File.new_for_path (Build.ROOT_RESTRICTIONS_FOLDER);
         var user_restrictions_folder = File.new_for_path (Path.build_filename (Environment.get_user_config_dir (), "wingpanel.d"));
 
         try {
@@ -115,7 +115,14 @@ public class Wingpanel.IndicatorManager : GLib.Object {
         }
 
         /* load indicators */
-        var base_folder = File.new_for_path (Build.INDICATORS_DIR);
+        var indicators_path = Environment.get_variable("HYBRIDBAR_INDICATORS_PATH");
+        if (indicators_path != null) {
+            debug ("Using HYBRIDBAR_INDICATORS_PATH environment variable");
+        } else {
+            indicators_path = Build.INDICATORS_DIR;
+        }
+
+        var base_folder = File.new_for_path (indicators_path);
 
         try {
             monitor = base_folder.monitor_directory (FileMonitorFlags.NONE, null);
