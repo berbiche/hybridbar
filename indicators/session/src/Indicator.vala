@@ -119,7 +119,7 @@ public class Session.Indicator : Wingpanel.Indicator {
             };
 
             if (server_type == Wingpanel.IndicatorManager.ServerType.SESSION) {
-                var users_separator = new Wingpanel.Widgets.Separator ();
+                var users_separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
                 manager = new Session.Services.UserManager (users_separator);
 
                 var scrolled_box = new Gtk.ScrolledWindow (null, null);
@@ -134,7 +134,7 @@ public class Session.Indicator : Wingpanel.Indicator {
                 main_grid.add (users_separator);
                 //main_grid.add (lock_screen);
                 main_grid.add (log_out);
-                //main_grid.add (new Wingpanel.Widgets.Separator ());
+                //main_grid.add (new Gtk.Separator (Gtk.Orientation.HORIZONTAL));
             }
 
             main_grid.add (reboot);

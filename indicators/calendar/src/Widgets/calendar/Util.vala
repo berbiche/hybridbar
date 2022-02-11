@@ -66,11 +66,21 @@ namespace Util {
             if (tzid.has_prefix (prefix)) {
                 // TZID has prefix "/freeassociation.sourceforge.net/",
                 // indicating a libical TZID.
-                return new GLib.TimeZone (tzid.offset (prefix.length));
+                var tz = new GLib.TimeZone.identifier (tzid.offset (prefix.length));
+                if (tz != null) {
+                    return tz;
+                } else {
+                    return new GLib.TimeZone.utc ();
+                }
             } else {
                 // TZID does not have libical prefix, potentially indicating an Olson
                 // standard city name.
-                return new GLib.TimeZone (tzid);
+                var tz = new GLib.TimeZone.identifier (tzid);
+                if (tz != null) {
+                    return tz;
+                } else {
+                    return new GLib.TimeZone.utc ();
+                }
             }
         }
         // If tzid fails, try ICal.Time.get_timezone ()
@@ -92,7 +102,12 @@ namespace Util {
         var minutes = (interval % 3600) / 60;
         var hour_string = "%s%02d:%02d".printf (is_positive ? "+" : "-", hours, minutes);
 
-        return new GLib.TimeZone (hour_string);
+        var tz = new GLib.TimeZone.identifier (hour_string);
+        if (tz != null) {
+            return tz;
+        } else {
+            return new GLib.TimeZone.utc ();
+        }
     }
 
     /**

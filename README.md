@@ -46,7 +46,7 @@ Examples with gsettings:
 
     gsettings set com.github.hcsubser.hybridbar use-transparency false
 
-To turn of transparency.
+To turn off transparency.
 
     gsettings set com.github.hcsubser.hybridbar.calendar menu-command [command]
     gsettings set com.github.hcsubser.hybridbar.network menu-command [command]

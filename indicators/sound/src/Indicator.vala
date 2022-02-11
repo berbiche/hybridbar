@@ -24,7 +24,7 @@ public class Sound.Indicator : Wingpanel.Indicator {
     private Widgets.MprisWidget mpris;
     private Widgets.Scale volume_scale;
     private Widgets.Scale mic_scale;
-    private Wingpanel.Widgets.Separator mic_separator;
+    private Gtk.Separator mic_separator;
     private Notify.Notification? notification;
     private Services.VolumeControlPulse volume_control;
 
@@ -271,7 +271,7 @@ public class Sound.Indicator : Wingpanel.Indicator {
             main_grid.attach (mpris, 0, position++, 1, 1);
 
             if (mpris.get_children ().length () > 0) {
-                var first_separator = new Wingpanel.Widgets.Separator ();
+                var first_separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
 
                 main_grid.attach (first_separator, 0, position++, 1, 1);
             }
@@ -309,7 +309,7 @@ public class Sound.Indicator : Wingpanel.Indicator {
             set_max_volume ();
 
             main_grid.attach (volume_scale, 0, position++, 1, 1);
-            main_grid.attach (new Wingpanel.Widgets.Separator (), 0, position++, 1, 1);
+            main_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, position++, 1, 1);
 
             mic_scale.margin_start = 6;
             mic_scale.active = !volume_control.micMute;
@@ -336,7 +336,7 @@ public class Sound.Indicator : Wingpanel.Indicator {
 
             main_grid.attach (mic_scale, 0, position++, 1, 1);
 
-            mic_separator = new Wingpanel.Widgets.Separator ();
+            mic_separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
 
             update_mic_visibility ();
 

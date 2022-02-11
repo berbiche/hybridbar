@@ -46,7 +46,7 @@ public class Sample.Indicator : Wingpanel.Indicator {
 
         main_widget = new Gtk.Grid ();
         main_widget.attach (hide_button, 0, 0);
-        main_widget.attach (new Wingpanel.Widgets.Separator (), 0, 1);
+        main_widget.attach (new Gtk.Separator (), 0, 1);
         main_widget.attach (compositing_switch, 0, 2);
 
         /* Indicator should be visible at startup */

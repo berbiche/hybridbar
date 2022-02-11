@@ -5,6 +5,9 @@
 # ----------------------------------------------------------------------------------------------------------------------
 project('wingpanel-indicator-ayatana', 'vala', 'c')
 
+prefix = get_option('prefix')
+libdir = join_paths(prefix, get_option('libdir'))
+
 sources = [
     'src/AyatanaIndicator.vala',
     'src/Indicator.vala',
@@ -18,11 +21,12 @@ sources = [
 
 dependencies = {
     'indicator3': dependency('indicator3-0.4'),
-    'wingpanel3': dependency('hybridbar-1.0')
+    'hybridbar': dependency('hybridbar-1.0')
 }
 
 indicator_name = 'ayatana'
-indicator_dir  = dependencies['wingpanel3'].get_pkgconfig_variable('indicatorsdir')
+wingpanel_dep = dependency('hybridbar-1.0')
+wingpanel_indicatorsdir = wingpanel_dep.get_pkgconfig_variable('indicatorsdir', define_variable: ['libdir', libdir])
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Bindings:
@@ -43,7 +47,7 @@ add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(gettext_name),
 # Generated constants:
 
 constants = configuration_data()
-constants.set_quoted('WINGPANEL_INDICATOR_DIR', join_paths(get_option('prefix'), indicator_dir))
+constants.set_quoted('WINGPANEL_INDICATOR_DIR', join_paths(get_option('prefix'), wingpanel_indicatorsdir))
 constants.set_quoted('AYATANA_INDICATOR_DIR',   dependencies['indicator3'].get_pkgconfig_variable('indicatordir'))
 constants.set_quoted('INDICATOR_NAME',          indicator_name)
 constants.set_quoted('DATA_DIR',                join_paths(get_option('prefix'), get_option('datadir')))
@@ -72,6 +76,6 @@ shared_module(
     dependencies: deps,
 
     install:     true,
-    install_dir: indicator_dir
+    install_dir: wingpanel_indicatorsdir
 )
 

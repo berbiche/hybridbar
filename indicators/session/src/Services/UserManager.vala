@@ -38,7 +38,7 @@ public class Session.Services.UserManager : Object {
     public signal void close ();
 
     public Session.Widgets.UserListBox user_grid { get; private set; }
-    public Wingpanel.Widgets.Separator users_separator { get; construct; }
+    public Gtk.Separator users_separator { get; construct; }
 
     private const uint GUEST_USER_UID = 999;
     private const uint NOBODY_USER_UID = 65534;
@@ -118,7 +118,7 @@ public class Session.Services.UserManager : Object {
         return UserState.OFFLINE;
     }
 
-    public UserManager (Wingpanel.Widgets.Separator users_separator) {
+    public UserManager (Gtk.Separator users_separator) {
         Object (users_separator: users_separator);
     }
 
