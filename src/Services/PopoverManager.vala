@@ -50,8 +50,7 @@ public class Wingpanel.Services.PopoverManager : Object {
             }
 
             if (_current_indicator != null) {
-            	popover.set_constrain_to(NONE);
-            	popover.set_position(BOTTOM);
+                popover.set_constrain_to (NONE);
                 popover.set_content (_current_indicator.indicator_widget);
                 popover.relative_to = _current_indicator;
                 owner.set_expanded (true);
@@ -72,6 +71,10 @@ public class Wingpanel.Services.PopoverManager : Object {
         this.owner = owner;
 
         popover = new Wingpanel.Widgets.IndicatorPopover ();
+
+        SettingsManager.get_default ().settings_state_changed.connect ((settings) => {
+            set_popover_position (settings.panel_position);
+        });
 
         popover.leave_notify_event.connect ((e) => {
             Gtk.Allocation allocation;
@@ -181,6 +184,16 @@ public class Wingpanel.Services.PopoverManager : Object {
             grabbed = false;
             Gtk.grab_remove (owner);
             owner.grab_focus ();
+        }
+    }
+
+    private void set_popover_position (Services.PanelPosition panel_position) {
+        // Open the popover below the panel if the panel is located at the top
+        // otherwise open the popover above the panel
+        if (panel_position == Services.PanelPosition.TOP) {
+            popover.set_position (Gtk.PositionType.BOTTOM);
+        } else {
+            popover.set_position (Gtk.PositionType.TOP);
         }
     }
 

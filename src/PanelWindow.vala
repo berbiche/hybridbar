@@ -25,6 +25,7 @@ public class Wingpanel.PanelWindow : Gtk.Window {
     private Widgets.Panel panel;
     private int panel_height = 30;
     private int panel_width = ANCHOR_TO_EDGES;
+    private Services.PanelPosition panel_position = Services.PanelPosition.TOP;
     private bool expanded = false;
     private int panel_displacement;
 
@@ -79,8 +80,6 @@ public class Wingpanel.PanelWindow : Gtk.Window {
         GtkLayerShell.init_for_window(this);
         GtkLayerShell.set_layer (this, GtkLayerShell.Layer.TOP);
         GtkLayerShell.auto_exclusive_zone_enable (this);
-        GtkLayerShell.set_margin(this, GtkLayerShell.Edge.TOP, 5);
-        GtkLayerShell.set_anchor(this, GtkLayerShell.Edge.TOP, true);
         GtkLayerShell.set_anchor(this, GtkLayerShell.Edge.LEFT, this.panel_width == ANCHOR_TO_EDGES);
         GtkLayerShell.set_anchor(this, GtkLayerShell.Edge.RIGHT, this.panel_width == ANCHOR_TO_EDGES);
     }
@@ -111,6 +110,7 @@ public class Wingpanel.PanelWindow : Gtk.Window {
     private void update_settings (Services.Settings settings) {
         panel_height = settings.panel_height;
         panel_width = settings.panel_width;
+        panel_position = settings.panel_position;
         update_panel_dimensions ();
     }
 
@@ -124,8 +124,21 @@ public class Wingpanel.PanelWindow : Gtk.Window {
         panel_width = int.min (monitor_dimensions.width, panel_width);
         panel_height = int.min (monitor_dimensions.height, panel_height);
 
+        // Whether to expand the window to occupy the full space
         GtkLayerShell.set_anchor (this, GtkLayerShell.Edge.LEFT, panel_width == ANCHOR_TO_EDGES);
         GtkLayerShell.set_anchor (this, GtkLayerShell.Edge.RIGHT, panel_width == ANCHOR_TO_EDGES);
+
+        // Whether to anchor the panel to a different edge
+        GtkLayerShell.set_anchor (this, GtkLayerShell.Edge.TOP, panel_position == Services.PanelPosition.TOP);
+        GtkLayerShell.set_anchor (this, GtkLayerShell.Edge.BOTTOM, panel_position == Services.PanelPosition.BOTTOM);
+
+        // Add margin above the specified edge of the screen
+        if (panel_position == Services.PanelPosition.TOP) {
+            GtkLayerShell.set_margin(this, GtkLayerShell.Edge.TOP, 5);
+        } else {
+            GtkLayerShell.set_margin(this, GtkLayerShell.Edge.BOTTOM, 5);
+        }
+
         // note: width request is useless if the panel is anchored (but the height request is useful?)
         this.set_size_request (panel_width, (popover_manager.current_indicator != null ? panel_height : -1));
     }

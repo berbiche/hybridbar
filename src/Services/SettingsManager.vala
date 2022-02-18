@@ -24,11 +24,16 @@ namespace Wingpanel.Services {
 		TRANSLUCENT_LIGHT,
 		TRANSLUCENT_DARK,
 	}
+	public enum PanelPosition {
+		TOP,
+		BOTTOM,
+	}
 
 	public struct Settings {
 		public int panel_height { get; set; }
 		public int panel_width { get; set; }
 		public bool use_transparency { get; set; }
+		public PanelPosition panel_position { get; set; }
 	}
 
 	public class SettingsManager : Object {
@@ -59,10 +64,14 @@ namespace Wingpanel.Services {
 			panel_gsettings.changed["panel-height"].connect (() => {
 				panel_height_changed (panel_gsettings.get_int ("panel-height"));
 			});
+			panel_gsettings.changed["panel-position"].connect (() => {
+				panel_position_changed (panel_gsettings.get_string ("panel-position"));
+			});
 
 			background_changed (panel_gsettings.get_boolean ("use-transparency"));
 			panel_height_changed (panel_gsettings.get_int ("panel-height"), false);
 			panel_width_changed (panel_gsettings.get_int ("panel-width"), false);
+			panel_position_changed (panel_gsettings.get_string ("panel-position"), false);
 
 			GLib.Idle.add (() => {
 				settings_state_changed (settings);
@@ -104,7 +113,6 @@ namespace Wingpanel.Services {
 				warning ("settings: panel-height value ignored because outside of range -1..INT_MAX");
 			}
 			if (propagateChange) {
-				debug ("panel_height_changed -> propagate");
 				settings_state_changed (settings);
 			}
 		}
@@ -116,7 +124,17 @@ namespace Wingpanel.Services {
 				warning ("settings: panel-width value ignored because outside of range -1..INT_MAX");
 			}
 			if (propagateChange) {
-				debug ("panel_width_changed -> propagate");
+				settings_state_changed (settings);
+			}
+		}
+
+		private void panel_position_changed (string panel_position, bool propagateChange = true) {
+			if (panel_position == "Top") {
+				settings.panel_position = PanelPosition.TOP;
+			} else {
+				settings.panel_position = PanelPosition.BOTTOM;
+			}
+			if (propagateChange) {
 				settings_state_changed (settings);
 			}
 		}
