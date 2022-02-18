@@ -26,13 +26,16 @@ stdenv.mkDerivation rec {
   #   rev = version;
   #   sha256 = "sha256-IiIkqsw+OMu6aqx9Et+cP0vXY19s+SGsTfikWX5r/cY=";
   # };
-  src = ../.;
-
-  # passthru = {
-  #   updateScript = nix-update-script {
-  #     attrPath = "pantheon.${pname}";
-  #   };
-  # };
+  src = builtins.path {
+    path = ../.;
+    name = "hybridbar";
+    filter = path: type: let
+      ignoredFiles = [
+        "nix"
+        "result"
+      ];
+    in ! (builtins.any (p: p == baseNameOf path) ignoredFiles);
+  };
 
   nativeBuildInputs = [
     gettext
@@ -41,8 +44,8 @@ stdenv.mkDerivation rec {
     pkg-config
     python3
     vala
-    wrapGAppsHook
     gtk-layer-shell
+    wrapGAppsHook
   ];
 
   buildInputs = [

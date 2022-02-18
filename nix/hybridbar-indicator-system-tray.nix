@@ -11,8 +11,8 @@
 , gettext
 , json-glib
 , python3
-, libayatana-indicator-gtk3
-, libindicator
+, libindicator-gtk3
+, indicator-application-gtk3
 }:
 
 stdenv.mkDerivation {
@@ -37,9 +37,11 @@ stdenv.mkDerivation {
     pantheon.elementary-icon-theme
     pantheon.granite
     gtk3
-    libayatana-indicator-gtk3
-    libindicator
+    libindicator-gtk3
+    indicator-application-gtk3
   ];
+
+  mesonFlags = [ "-Dayatana-indicator-dir=${indicator-application-gtk3}/lib/indicators3/7/" ];
 
   meta = with lib; {
     description = "Hybridbar system-tray indicator";
