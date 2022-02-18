@@ -18,15 +18,13 @@
  */
 
 public class Wingpanel.PanelWindow : Gtk.Window {
+    private const int ANCHOR_TO_EDGES = -1;
+
     public Services.PopoverManager popover_manager;
 
     private Widgets.Panel panel;
-    private int monitor_number;
-    private int monitor_width = 500;
-    private int monitor_height =500 ;
-    private int monitor_x;
-    private int monitor_y;
-    private int panel_height;
+    private int panel_height = 30;
+    private int panel_width = ANCHOR_TO_EDGES;
     private bool expanded = false;
     private int panel_displacement;
 
@@ -41,8 +39,6 @@ public class Wingpanel.PanelWindow : Gtk.Window {
             type_hint: Gdk.WindowTypeHint.DOCK,
             vexpand: false
         );
-
-        monitor_number = screen.get_primary_monitor ();
 
         var style_context = get_style_context ();
         style_context.add_class (Widgets.StyleClass.PANEL);
@@ -82,14 +78,11 @@ public class Wingpanel.PanelWindow : Gtk.Window {
 
         GtkLayerShell.init_for_window(this);
         GtkLayerShell.set_layer (this, GtkLayerShell.Layer.TOP);
-        GtkLayerShell.auto_exclusive_zone_enable(this);
-        /* GtkLayerShell.set_margin(panel_window, GtkLayerShell.Edge.TOP, 20); */
+        GtkLayerShell.auto_exclusive_zone_enable (this);
+        GtkLayerShell.set_margin(this, GtkLayerShell.Edge.TOP, 5);
         GtkLayerShell.set_anchor(this, GtkLayerShell.Edge.TOP, true);
-        GtkLayerShell.set_anchor(this, GtkLayerShell.Edge.LEFT, true);
-        GtkLayerShell.set_anchor(this, GtkLayerShell.Edge.RIGHT, true);
- 
- 
-
+        GtkLayerShell.set_anchor(this, GtkLayerShell.Edge.LEFT, this.panel_width == ANCHOR_TO_EDGES);
+        GtkLayerShell.set_anchor(this, GtkLayerShell.Edge.RIGHT, this.panel_width == ANCHOR_TO_EDGES);
     }
 
     private bool animation_step () {
@@ -107,29 +100,34 @@ public class Wingpanel.PanelWindow : Gtk.Window {
     private void on_realize () {
         update_panel_dimensions ();
 
-        Services.BackgroundManager.initialize (this.monitor_number, panel_height);
+        Services.SettingsManager.initialize (panel_height);
+
+        var background_manager = Services.SettingsManager.get_default ();
+        background_manager.settings_state_changed.connect (update_settings);
 
         Timeout.add (300 / panel_height, animation_step);
     }
 
+    private void update_settings (Services.Settings settings) {
+        panel_height = settings.panel_height;
+        panel_width = settings.panel_width;
+        update_panel_dimensions ();
+    }
+
     private void update_panel_dimensions () {
+        debug ("update_panel_dimensions");
         panel_height = panel.get_allocated_height ();
 
-        //monitor_number = get_display ().get_primary_monitor ();
         Gdk.Monitor monitor = get_display ().get_primary_monitor () ?? get_display ().get_monitor (0);
         Gdk.Rectangle monitor_dimensions = monitor.get_geometry ();
 
-        monitor_width = monitor_dimensions.width;
-        monitor_height = monitor_dimensions.height;
+        panel_width = int.min (monitor_dimensions.width, panel_width);
+        panel_height = int.min (monitor_dimensions.height, panel_height);
 
-        this.set_size_request (monitor_width, (popover_manager.current_indicator != null ? monitor_height : -1));
-
-        monitor_x = monitor_dimensions.x;
-        monitor_y = monitor_dimensions.y;
-
-        this.move (monitor_x, monitor_y - (panel_height + panel_displacement));
-
-        update_struts ();
+        GtkLayerShell.set_anchor (this, GtkLayerShell.Edge.LEFT, panel_width == ANCHOR_TO_EDGES);
+        GtkLayerShell.set_anchor (this, GtkLayerShell.Edge.RIGHT, panel_width == ANCHOR_TO_EDGES);
+        // note: width request is useless if the panel is anchored (but the height request is useful?)
+        this.set_size_request (panel_width, (popover_manager.current_indicator != null ? panel_height : -1));
     }
 
     private void update_visual () {
@@ -142,81 +140,14 @@ public class Wingpanel.PanelWindow : Gtk.Window {
         }
     }
 
-    private void update_struts () {
-        if (!this.get_realized () || panel == null) {
-            return;
-        }
-
-        /**
-        * https://specifications.freedesktop.org/wm-spec/wm-spec-1.5.html#NETWMSTRUT
-        * The _NET_WM_STRUCT_PARTICAL specification does not allow to reserve space for arbitrary rectangles
-        * on the screen. Instead it only allows to reserve space at the borders of screen.
-        * As for multi-monitor layouts the wingpanel can be at the within the screen (and not at the border)
-        * this makes it impossible to reserve the correct space for all possible multi-monitor layouts.
-        * Fortunately for up to 3 monitors there is always a possiblity to reserve the right space by also
-        * using the struct-left and struct-right cardinals.
-        */
-
-        var display = get_display ();
-        var n_monitors = display.get_n_monitors ();
-        int screen_width = 0;
-        bool no_monitor_left = true;
-        bool no_monitor_right = true;
-        bool no_monitor_above = true;
-        for (var i = 0; i < n_monitors; i++) {
-            var monitor = display.get_monitor (i);
-            var rect = monitor.get_geometry ();
-            screen_width = int.max (screen_width, rect.x + rect.width);
-            if (monitor.is_primary()) {
-                continue;
-            }
-
-            var is_left = rect.x + rect.width <= monitor_x;
-            var is_right = rect.x >= monitor_x + monitor_width;
-            var is_above = rect.y + rect.height <= monitor_y;
-            var is_below = rect.y >= monitor_y + panel_height;
-            no_monitor_left &= !is_left || is_above || is_below;
-            no_monitor_right &= !is_right || is_above || is_below;
-            no_monitor_above &= !is_above || is_left || is_right;
-        }
-
-        long struts[12] = { 0 };
-        var scale_factor = get_scale_factor ();
-        if (no_monitor_left) {
-            struts [0] = (monitor_x + monitor_width) * scale_factor;
-            struts [4] = monitor_y * scale_factor;
-            struts [5] = (monitor_y - panel_displacement) * scale_factor - 1;
-        } else if (no_monitor_right) {
-            struts [1] = (screen_width - monitor_x) * scale_factor;
-            struts [6] = monitor_y * scale_factor;
-            struts [7] = (monitor_y - panel_displacement) * scale_factor - 1;
-        } else if (no_monitor_above) {
-            struts [2] = (monitor_y - panel_displacement) * scale_factor;
-            struts [8] = monitor_x * scale_factor;
-            struts [9] = (monitor_x + monitor_width) * scale_factor - 1;
-        } else {
-            warning ("Unable to set struts, because Wingpanel is not at the edge of the Gdk.Screen area.");
-        }
-
-        Gdk.property_change (this.get_window (), Gdk.Atom.intern ("_NET_WM_STRUT_PARTIAL", false),
-                             Gdk.Atom.intern ("CARDINAL", false), 32, Gdk.PropMode.REPLACE, (uint8[])struts, 12);
-    }
-
     public void set_expanded (bool expand) {
         if (expand && !this.expanded) {
-            Services.BackgroundManager.get_default ().remember_window ();
-
             this.expanded = true;
-            /* this.set_size_request (monitor_width, panel_height + 110); */
-             GtkLayerShell.set_keyboard_interactivity(this, true); 
+            GtkLayerShell.set_keyboard_interactivity (this, true);
         } else if (!expand) {
-            Services.BackgroundManager.get_default ().restore_window ();
-
             this.expanded = false;
-
-            GtkLayerShell.set_keyboard_interactivity(this, false);
-            this.set_size_request (monitor_width, expanded ? monitor_height : -1);
-            this.resize (monitor_width, expanded ? monitor_height : 1);
+            GtkLayerShell.set_keyboard_interactivity (this, false);
+            this.set_size_request (panel_width, expanded ? panel_height : -1);
         }
     }
 }

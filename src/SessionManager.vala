@@ -24,50 +24,50 @@
  */
 
 namespace Wingpanel.SessionManager {
-    [DBus (name = "org.gnome.SessionManager")]
-    public interface SessionManager : Object {
-        public abstract async ObjectPath register_client (string app_id, string client_start_id) throws GLib.Error;
-    }
+	[DBus (name = "org.gnome.SessionManager")]
+	public interface SessionManager : Object {
+		public abstract async ObjectPath register_client (string app_id, string client_start_id) throws GLib.Error;
+	}
 
-    [DBus (name = "org.gnome.SessionManager.ClientPrivate")]
-    public interface SessionClient : Object {
-        public abstract void end_session_response (bool is_ok, string reason) throws GLib.Error;
+	[DBus (name = "org.gnome.SessionManager.ClientPrivate")]
+	public interface SessionClient : Object {
+		public abstract void end_session_response (bool is_ok, string reason) throws GLib.Error;
 
-        public signal void stop ();
-        public signal void query_end_session (uint flags);
-        public signal void end_session (uint flags);
-        public signal void cancel_end_session ();
-    }
+		public signal void stop ();
+		public signal void query_end_session (uint flags);
+		public signal void end_session (uint flags);
+		public signal void cancel_end_session ();
+	}
 
-    public const string GNOME_SESSION_MANAGER_IFACE = "org.gnome.SessionManager";
-    public const string GNOME_SESSION_MANAGER_PATH = "/org/gnome/SessionManager";
+	public const string GNOME_SESSION_MANAGER_IFACE = "org.gnome.SessionManager";
+	public const string GNOME_SESSION_MANAGER_PATH = "/org/gnome/SessionManager";
 
-    public async SessionClient? register_with_session (string app_id) {
-        SessionClient? sclient = null;
-        ObjectPath? path = null;
+	public async SessionClient? register_with_session (string app_id) {
+		SessionClient? sclient = null;
+		ObjectPath? path = null;
 
-        string? start_id = Environment.get_variable ("DESKTOP_AUTOSTART_ID");
-        if (start_id != null) {
-            Environment.unset_variable ("DESKTOP_AUTOSTART_ID");
-        } else {
-            start_id = "";
-        }
+		string? start_id = Environment.get_variable ("DESKTOP_AUTOSTART_ID");
+		if (start_id != null) {
+			Environment.unset_variable ("DESKTOP_AUTOSTART_ID");
+		} else {
+			start_id = "";
+		}
 
-        try {
-            SessionManager? session = yield Bus.get_proxy (BusType.SESSION, GNOME_SESSION_MANAGER_IFACE, GNOME_SESSION_MANAGER_PATH);
-            path = yield session.register_client (app_id, start_id);
-        } catch (Error e) {
-            warning ("Error registering client: %s", e.message);
-            return null;
-        }
+		try {
+			SessionManager? session = yield Bus.get_proxy (BusType.SESSION, GNOME_SESSION_MANAGER_IFACE, GNOME_SESSION_MANAGER_PATH);
+			path = yield session.register_client (app_id, start_id);
+		} catch (Error e) {
+			warning ("Error registering client: %s", e.message);
+			return null;
+		}
 
-        try {
-            sclient = yield Bus.get_proxy (BusType.SESSION, GNOME_SESSION_MANAGER_IFACE, path);
-        } catch (Error e) {
-            warning ("Unable to get Private Client proxy: %s", e.message);
-            return null;
-        }
+		try {
+			sclient = yield Bus.get_proxy (BusType.SESSION, GNOME_SESSION_MANAGER_IFACE, path);
+		} catch (Error e) {
+			warning ("Unable to get Private Client proxy: %s", e.message);
+			return null;
+		}
 
-        return sclient;
-    }
+		return sclient;
+	}
 }

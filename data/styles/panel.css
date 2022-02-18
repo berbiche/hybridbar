@@ -1,15 +1,18 @@
 .panel {
-    background-color: transparent;
     transition: all 100ms ease-in-out;
     margin-bottom: 0;
     -GtkWidget-window-dragging: false;
 }
 
-.panel.maximized {
-    background-color: #000;
+.panel.color-dark {
+    background-color: alpha(#000, 0.5);
 }
 
-.panel.translucent {
+.panel.color-light {
+    background-color: #fff;
+}
+
+.panel.color-dark.translucent {
     background-color: alpha(#000, 0.5);
     box-shadow:
         0 1px 3px alpha(#000, 0.24),

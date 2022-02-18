@@ -18,37 +18,37 @@
  */
 
 public class Wingpanel.Widgets.IndicatorPopover : Gtk.Popover {
-    private unowned Gtk.Widget? widget = null;
+	private unowned Gtk.Widget? widget = null;
 
-    private Gtk.Box container;
+	private Gtk.Box container;
 
-    construct {
-        width_request = 256;
-        modal = false;
-        name = name + "/popover";
-        position = Gtk.PositionType.BOTTOM;
+	construct {
+		width_request = 256;
+		modal = false;
+		name = name + "/popover";
+		position = Gtk.PositionType.BOTTOM;
 
-        container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
-            margin_top = 3,
-            margin_bottom = 3
-        };
+		container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
+			margin_top = 3,
+			margin_bottom = 3
+		};
 
-        add (container);
-    }
+		add (container);
+	}
 
-    public void set_content (Gtk.Widget? content) {
-        if (content == widget) {
-            return;
-        }
+	public void set_content (Gtk.Widget? content) {
+		if (content == widget) {
+			return;
+		}
 
-        if (widget != null) {
-            container.remove (widget);
-            widget = null;
-        }
+		if (widget != null) {
+			container.remove (widget);
+			widget = null;
+		}
 
-        if (content != null) {
-            container.add (content);
-            widget = content;
-        }
-    }
+		if (content != null) {
+			container.add (content);
+			widget = content;
+		}
+	}
 }

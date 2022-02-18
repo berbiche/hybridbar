@@ -82,16 +82,8 @@ public class Wingpanel.Widgets.Panel : Gtk.EventBox {
         style_context.add_class (StyleClass.PANEL);
         style_context.add_provider (resource_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-        Services.BackgroundManager.get_default ().background_state_changed.connect (update_background);
-
-       // var granite_settings = Granite.Settings.get_default ();
-        var gtk_settings = Gtk.Settings.get_default ();
-
-       // gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
-
-       // granite_settings.notify["prefers-color-scheme"].connect (() => {
-        //    gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
-        //});
+        var background_manager = Services.SettingsManager.get_default ();
+        background_manager.background_state_changed.connect (update_background);
     }
 
     public override bool button_press_event (Gdk.EventButton event) {
@@ -113,17 +105,10 @@ public class Wingpanel.Widgets.Panel : Gtk.EventBox {
 
         window.get_display ().get_default_seat ().ungrab ();
 
-        Gdk.ModifierType state;
-        event.get_state (out state);
-
         popover_manager.close ();
 
-        var scale_factor = this.get_scale_factor ();
-        var x = (int)event.x_root * scale_factor;
-        var y = (int)event.y_root * scale_factor;
-
-        var background_manager = Services.BackgroundManager.get_default ();
-        return background_manager.begin_grab_focused_window (x, y, (int)event.button, time, state);
+        // Don't propagate
+        return false;
     }
 
     public void cycle (bool forward) {
@@ -310,35 +295,29 @@ public class Wingpanel.Widgets.Panel : Gtk.EventBox {
         }
 
         switch (state) {
-            case Services.BackgroundState.DARK :
+            case Services.BackgroundState.DARK:
+                debug ("update_background: dark");
                 style_context.add_class ("color-light");
                 style_context.remove_class ("color-dark");
-                style_context.remove_class ("maximized");
                 style_context.remove_class ("translucent");
                 break;
             case Services.BackgroundState.LIGHT:
+                debug ("update_background: light");
                 style_context.add_class ("color-dark");
                 style_context.remove_class ("color-light");
-                style_context.remove_class ("maximized");
-                style_context.remove_class ("translucent");
-                break;
-            case Services.BackgroundState.MAXIMIZED:
-                style_context.add_class ("maximized");
-                style_context.remove_class ("color-light");
-                style_context.remove_class ("color-dark");
                 style_context.remove_class ("translucent");
                 break;
             case Services.BackgroundState.TRANSLUCENT_DARK:
+                debug ("update_background: translucent-dark");
                 style_context.add_class ("translucent");
                 style_context.add_class ("color-light");
                 style_context.remove_class ("color-dark");
-                style_context.remove_class ("maximized");
                 break;
             case Services.BackgroundState.TRANSLUCENT_LIGHT:
+                debug ("update_background: translucent-light");
                 style_context.add_class ("translucent");
                 style_context.add_class ("color-dark");
                 style_context.remove_class ("color-light");
-                style_context.remove_class ("maximized");
                 break;
         }
     }
