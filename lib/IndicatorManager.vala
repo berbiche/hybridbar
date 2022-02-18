@@ -168,7 +168,7 @@ public class Wingpanel.IndicatorManager : GLib.Object {
             return;
         }
 
-        Module module = Module.open (path, ModuleFlags.BIND_LAZY);
+        Module module = Module.open (path, ModuleFlags.LAZY);
 
         if (module == null) {
             critical (Module.error ());
