@@ -1,5 +1,6 @@
 # Hybridbar Ayatana-Compatibility Indicator (Community Version)
-Does not work on wayland currently,this readme is a mess will fix it some other time
+
+~~Does not work on wayland currently~~, this readme is a mess will fix it some other time.
 
 <h1>Description:</h1>
 

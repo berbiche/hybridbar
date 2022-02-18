@@ -16,35 +16,35 @@
  */
 
 public class AyatanaCompatibility.IndicatorFactory : Object, IndicatorLoader {
-    private Gee.Collection<IndicatorIface> indicators;
+	private Gee.Collection<IndicatorIface> indicators;
 
-    public IndicatorFactory () {
-    }
+	public IndicatorFactory () {
+	}
 
-    public Gee.Collection<IndicatorIface> get_indicators () {
-        if (indicators == null) {
-            indicators = new Gee.LinkedList<IndicatorIface> ();
-            load_indicator (File.new_for_path (Constants.AYATANA_INDICATOR_DIR), "libapplication.so");
-        }
+	public Gee.Collection<IndicatorIface> get_indicators () {
+		if (indicators == null) {
+			indicators = new Gee.LinkedList<IndicatorIface> ();
+			load_indicator (File.new_for_path (Constants.AYATANA_INDICATOR_DIR), "libapplication.so");
+		}
 
-        return indicators.read_only_view;
-    }
+		return indicators.read_only_view;
+	}
 
-    private void load_indicator (File parent_dir, string name) {
-        string indicator_path = parent_dir.get_child (name).get_path ();
-        if (!File.new_for_path (indicator_path).query_exists ()) {
-            debug ("No ayatana support possible because there is no Indicator Library: %s", name);
-            return;
-        }
-        IndicatorAyatana.Object indicator = null;
+	private void load_indicator (File parent_dir, string name) {
+		string indicator_path = parent_dir.get_child (name).get_path ();
+		if (!File.new_for_path (indicator_path).query_exists ()) {
+			debug ("No ayatana support possible because there is no Indicator Library: %s", name);
+			return;
+		}
+		IndicatorAyatana.Object indicator = null;
 
-        debug ("Loading Indicator Library: %s", name);
-        indicator = new IndicatorAyatana.Object.from_file (indicator_path);
+		debug ("Loading Indicator Library: %s", name);
+		indicator = new IndicatorAyatana.Object.from_file (indicator_path);
 
-        if (indicator != null)
-            indicators.add (new IndicatorObject (indicator, name));
-        else
-            debug ("Unable to load %s: invalid object.", name);
+		if (indicator != null)
+			indicators.add (new IndicatorObject (indicator, name));
+		else
+			warning ("Unable to load %s: invalid object.", name);
 
-    }
+	}
 }

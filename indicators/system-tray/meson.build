@@ -5,9 +5,6 @@
 # ----------------------------------------------------------------------------------------------------------------------
 project('wingpanel-indicator-ayatana', 'vala', 'c')
 
-prefix = get_option('prefix')
-libdir = join_paths(prefix, get_option('libdir'))
-
 sources = [
     'src/AyatanaIndicator.vala',
     'src/Indicator.vala',
@@ -24,15 +21,23 @@ dependencies = {
     'hybridbar': dependency('hybridbar-1.0')
 }
 
+libdir = join_paths(get_option('prefix'), get_option('libdir'))
+
 indicator_name = 'ayatana'
-wingpanel_dep = dependency('hybridbar-1.0')
-wingpanel_indicatorsdir = wingpanel_dep.get_pkgconfig_variable('indicatorsdir', define_variable: ['libdir', libdir])
+indicator_dir = dependencies['hybridbar'].get_pkgconfig_variable('indicatorsdir', define_variable: ['libdir', libdir])
+
+ayatana_indicator_dir = get_option('ayatana-indicator-dir')
+if ayatana_indicator_dir == ''
+    ayatana_indicator_dir = dependencies['indicator3'].get_pkgconfig_variable('indicatordir')
+endif
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Bindings:
 
 add_project_arguments(['--vapidir', join_paths(meson.current_source_dir(), 'vapi')],
                       language: 'vala')
+
+add_project_arguments(['-DG_LOG_DOMAIN="wingpanel-indicator-ayatana"'], language: 'c')
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Internationalization:
@@ -47,8 +52,8 @@ add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format(gettext_name),
 # Generated constants:
 
 constants = configuration_data()
-constants.set_quoted('WINGPANEL_INDICATOR_DIR', join_paths(get_option('prefix'), wingpanel_indicatorsdir))
-constants.set_quoted('AYATANA_INDICATOR_DIR',   dependencies['indicator3'].get_pkgconfig_variable('indicatordir'))
+constants.set_quoted('WINGPANEL_INDICATOR_DIR', join_paths(get_option('prefix'), indicator_dir))
+constants.set_quoted('AYATANA_INDICATOR_DIR',   ayatana_indicator_dir)
 constants.set_quoted('INDICATOR_NAME',          indicator_name)
 constants.set_quoted('DATA_DIR',                join_paths(get_option('prefix'), get_option('datadir')))
 constants.set_quoted('GETTEXT_PACKAGE',         gettext_name)
@@ -76,6 +81,6 @@ shared_module(
     dependencies: deps,
 
     install:     true,
-    install_dir: wingpanel_indicatorsdir
+    install_dir: indicator_dir
 )
 

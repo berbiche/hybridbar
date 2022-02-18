@@ -16,9 +16,9 @@
  */
 
 public interface AyatanaCompatibility.IndicatorIface : Object {
-    public signal void entry_added (Indicator entry);
-    public signal void entry_removed (Indicator entry);
+	public signal void entry_added (Indicator entry);
+	public signal void entry_removed (Indicator entry);
 
-    public abstract string get_name ();
-    public abstract Gee.Collection<Indicator> get_entries ();
+	public abstract string get_name ();
+	public abstract Gee.Collection<Indicator> get_entries ();
 }

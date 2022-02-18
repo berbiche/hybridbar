@@ -16,47 +16,47 @@
  */
 
 public class AyatanaCompatibility.SubMenuButton : Gtk.Button {
-    private Gtk.Label button_label;
+	private Gtk.Label button_label;
 
-    private new Gtk.Image image;
+	private new Gtk.Image image;
 
-    public SubMenuButton (string caption) {
-        this.hexpand = true;
+	public SubMenuButton (string caption) {
+		this.hexpand = true;
 
-        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-        box.hexpand = true;
+		var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+		box.hexpand = true;
 
-        button_label = new Gtk.Label.with_mnemonic (caption);
-        button_label.set_mnemonic_widget (this);
-        button_label.use_markup = true;
-        button_label.margin_start = 6;
+		button_label = new Gtk.Label.with_mnemonic (caption);
+		button_label.set_mnemonic_widget (this);
+		button_label.use_markup = true;
+		button_label.margin_start = 6;
 
-        image = new Gtk.Image ();
-        image.halign = Gtk.Align.END;
-        try {
-            Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default ();
-            image.pixbuf = icon_theme.load_icon ("pan-end-symbolic", 16, 0);
-        } catch (Error e) {
-            warning (e.message);
-        }
-        image.margin_end = 6;
+		image = new Gtk.Image ();
+		image.halign = Gtk.Align.END;
+		try {
+			Gtk.IconTheme icon_theme = Gtk.IconTheme.get_default ();
+			image.pixbuf = icon_theme.load_icon ("pan-end-symbolic", 16, 0);
+		} catch (Error e) {
+			warning (e.message);
+		}
+		image.margin_end = 6;
 
-        box.add (button_label);
-        box.pack_end (image);
+		box.add (button_label);
+		box.pack_end (image);
 
-        this.add (box);
+		this.add (box);
 
-        var style_context = this.get_style_context ();
-        style_context.add_class (Gtk.STYLE_CLASS_MENUITEM);
-        style_context.remove_class (Gtk.STYLE_CLASS_BUTTON);
-        style_context.remove_class ("text-button");
-    }
+		var style_context = this.get_style_context ();
+		style_context.add_class (Gtk.STYLE_CLASS_MENUITEM);
+		style_context.remove_class (Gtk.STYLE_CLASS_BUTTON);
+		style_context.remove_class ("text-button");
+	}
 
-    public void set_caption (string caption) {
-        button_label.set_label (Markup.escape_text (caption));
-    }
+	public void set_caption (string caption) {
+		button_label.set_label (Markup.escape_text (caption));
+	}
 
-    public string get_caption () {
-        return button_label.get_label ();
-    }
+	public string get_caption () {
+		return button_label.get_label ();
+	}
 }

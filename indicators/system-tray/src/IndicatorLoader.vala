@@ -16,5 +16,5 @@
  */
 
 public interface AyatanaCompatibility.IndicatorLoader : Object {
-    public abstract Gee.Collection<IndicatorIface> get_indicators ();
+	public abstract Gee.Collection<IndicatorIface> get_indicators ();
 }

@@ -55,6 +55,7 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
     }
 
     private void create_entry (Indicator indicator) {
+        debug ("Ayatana - create_entry: %s", indicator.code_name);
         if (blacklist.contains (indicator.name_hint ())) {
             return;
         }
@@ -74,7 +75,7 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
             return;
         }
 
-        GLib.Timeout.add(250, () => {
+        GLib.Timeout.add (250, () => {
             // If there are any unrealized widgets, we need to keep waiting.
             foreach (Wingpanel.Indicator indicator in Wingpanel.IndicatorManager.get_default ().get_indicators ()) {
                 if (indicator.visible && indicator.get_display_widget ().get_realized () == false) return true;
@@ -92,7 +93,7 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
                 manager.register_indicator (indicator.code_name, indicator);
             }
 
-            deferred_indicators.clear();
+            deferred_indicators.clear ();
             wingpanel_defer_register = false; // Any future indicators are probably safe.
             return false;
         });
@@ -147,8 +148,9 @@ public class AyatanaCompatibility.MetaIndicator : Wingpanel.Indicator {
 }
 
 public Wingpanel.Indicator? get_indicator (Module module, Wingpanel.IndicatorManager.ServerType server_type) {
-    if (server_type != Wingpanel.IndicatorManager.ServerType.SESSION)
+    if (server_type != Wingpanel.IndicatorManager.ServerType.SESSION) {
         return null;
+    }
 
     debug ("Activating AyatanaCompatibility Meta Indicator");
     var indicator = new AyatanaCompatibility.MetaIndicator ();

@@ -1,0 +1,1 @@
+option('ayatana-indicator-dir', type: 'string', value: '', description: 'Directory containing the libindicator.so file. If unset or set to an empty string, the value will be automatically derived.')
