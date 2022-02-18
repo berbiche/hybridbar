@@ -20,6 +20,8 @@ public class Slingshot.Backend.AppSystem : Object {
 
     public Gee.HashMap<string, Gee.ArrayList<App>> apps { get; private set; default = null; }
 
+    private const string HYBRIDBAR_APPLICATIONS_MENU = "hybridbar-applications.menu";
+
     private const int MENU_REFRESH_TIMEOUT_SECONDS = 3;
     private uint refresh_timeout_id = 0;
 
@@ -36,8 +38,12 @@ public class Slingshot.Backend.AppSystem : Object {
         rl_service.update_complete.connect (update_popularity);
 #endif
 
-        apps_menu = new GMenu.Tree (
-            "hybridbar-applications.menu",
+        var file = find_menu_file ();
+        if (file == null) {
+            throw new FileError.NOENT ("Could not find menu file: %s".printf (HYBRIDBAR_APPLICATIONS_MENU));
+        }
+        apps_menu = new GMenu.Tree.for_path (
+            file,
             GMenu.TreeFlags.INCLUDE_EXCLUDED | GMenu.TreeFlags.SORT_DISPLAY_NAME
         );
         apps_menu.changed.connect (queue_update_app_system);
@@ -174,5 +180,27 @@ public class Slingshot.Backend.AppSystem : Object {
 
     private static int sort_apps_by_name (Backend.App a, Backend.App b) {
         return a.name.collate (b.name);
+    }
+
+    private static string? find_menu_file () {
+        string[] data_dirs = Environment.get_system_config_dirs ();
+        data_dirs += Environment.get_user_config_dir ();
+        data_dirs += Environment.get_user_data_dir ();
+
+        string? found = find_menu_file_real (data_dirs);
+        if (found == null) {
+            found = find_menu_file_real (Environment.get_system_data_dirs ());
+        }
+        return found;
+    }
+
+    private static string? find_menu_file_real (unowned string[] data_dirs) {
+        foreach (string dir in data_dirs) {
+            var path = Path.build_filename (dir, "menus", HYBRIDBAR_APPLICATIONS_MENU);
+            var file = File.new_for_path (path);
+            if (file.query_exists ())
+                return file.get_path ();
+        }
+        return null;
     }
 }
