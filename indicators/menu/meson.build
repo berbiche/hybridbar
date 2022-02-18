@@ -7,8 +7,10 @@ project(
 i18n = import('i18n')
 gnome = import('gnome')
 
-add_project_arguments(
-    '-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()),
+add_project_arguments([
+        '-DGETTEXT_PACKAGE="@0@"'.format(meson.project_name()),
+        '-DG_LOG_DOMAIN="wingpanel-indicator-menu"'
+    ],
     language: 'c'
 )
 

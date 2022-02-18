@@ -17,6 +17,8 @@ add_project_arguments(
     language: 'vala'
 )
 
+add_project_arguments(['-DG_LOG_DOMAIN="wingpanel-indicator-network"'], language: 'c')
+
 wingpanel_dep = dependency('hybridbar-1.0')
 wingpanel_indicatorsdir = wingpanel_dep.get_pkgconfig_variable('indicatorsdir', define_variable: ['libdir', libdir])
 
