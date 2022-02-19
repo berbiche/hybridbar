@@ -54,5 +54,7 @@ stdenv.mkDerivation rec {
     )
   '';
 
-  inherit (hybridbar) meta;
+  meta = hybridbar.meta // {
+    mainProgram = "hybridbar";
+  };
 }

@@ -81,5 +81,6 @@ stdenv.mkDerivation rec {
     license = licenses.gpl3Plus;
     platforms = platforms.linux;
     maintainers = with maintainers; [ berbiche ];
+    mainProgram = "hybridbar";
   };
 }
