@@ -19,16 +19,27 @@
 
 public class Wingpanel.Application : Gtk.Application {
     private const string LIST_INDICATORS_ACTION_NAME = "list-indicators";
+    private const string WATCH_LOADED_INDICATORS_ACTION_NAME = "watch-indicators";
     private const string OPEN_INDICATOR_ACTION_NAME = "open-indicator";
     private const string CLOSE_INDICATOR_ACTION_NAME = "close-indicator";
     private const string SERVER_TYPE_ACTION_NAME = "greeter";
     private const string TOGGLE_INDICATOR_ACTION_NAME = "toggle-indicator";
 
+    private static bool is_started = false;
+
     private const OptionEntry[] OPTIONS = {
-        { OPEN_INDICATOR_ACTION_NAME, 'o', 0, OptionArg.STRING, null, "Open an indicator", "code_name" },
-        { CLOSE_INDICATOR_ACTION_NAME, 'c', 0, OptionArg.STRING, null, "Close an indicator", "code_name" },
+        // --open-indicator INDICATOR || -o INDICATOR
+        { OPEN_INDICATOR_ACTION_NAME, 'o', 0, OptionArg.STRING, null, "Open an indicator", "INDICATOR" },
+        // --close-indicator INDICATOR || -c INDICATOR
+        { CLOSE_INDICATOR_ACTION_NAME, 'c', 0, OptionArg.STRING, null, "Close an indicator", "INDICATOR" },
+        // --greeter
         { SERVER_TYPE_ACTION_NAME, 'g', 0, OptionArg.NONE, null, "Server is a greeter", null },
-        { TOGGLE_INDICATOR_ACTION_NAME, 't', 0, OptionArg.STRING, null, "Toggle an indicator", "code_name" },
+        // --toggle-indicator INDICATOR || -t INDICATOR
+        { TOGGLE_INDICATOR_ACTION_NAME, 't', 0, OptionArg.STRING, null, "Toggle an indicator", "INDICATOR" },
+        // --list-indicators || -l
+        { LIST_INDICATORS_ACTION_NAME, 'l', 0, OptionArg.NONE, null, "List available indicators", null },
+        // --watch-indicators || -l
+        { WATCH_LOADED_INDICATORS_ACTION_NAME, '\0', 0, OptionArg.NONE, null, "Watch loaded and unloaded indicators", null },
         { null }
     };
 
@@ -78,10 +89,19 @@ public class Wingpanel.Application : Gtk.Application {
     protected override int command_line (ApplicationCommandLine command_line) {
         VariantDict options = command_line.get_options_dict ();
 
+        // Always load the IndicatorManager before anything else
         if (options.contains (SERVER_TYPE_ACTION_NAME)) {
             IndicatorManager.get_default ().initialize (IndicatorManager.ServerType.GREETER);
         } else {
             IndicatorManager.get_default ().initialize (IndicatorManager.ServerType.SESSION);
+        }
+
+        if (options.contains (LIST_INDICATORS_ACTION_NAME)) {
+            print ("Indicators:\n");
+            foreach (string indicator in list_indicators ()) {
+                print ("%s\n", indicator);
+            }
+            return -1;
         }
 
         if (options.contains (OPEN_INDICATOR_ACTION_NAME)) {
@@ -96,31 +116,42 @@ public class Wingpanel.Application : Gtk.Application {
             activate_action (TOGGLE_INDICATOR_ACTION_NAME, options.lookup_value (TOGGLE_INDICATOR_ACTION_NAME, VariantType.STRING));
         }
 
+        if (options.contains (WATCH_LOADED_INDICATORS_ACTION_NAME)) {
+            activate_action (WATCH_LOADED_INDICATORS_ACTION_NAME, null);
+        }
+
+        activate ();
+
         return 0;
     }
 
     protected override void startup () {
         base.startup ();
 
-        panel_window = new PanelWindow (this);
-        panel_window.show_all ();
+        mark_busy ();
 
         register_actions ();
     }
 
     protected override void activate () {
-        /* Do nothing */
+        if (!is_started) {
+            mark_busy ();
+            is_started = true;
+            panel_window = new PanelWindow (this);
+            panel_window.show_all ();
+            unmark_busy();
+        }
     }
 
     private void register_actions () {
-        SimpleAction list_indicators_action = new SimpleAction.stateful (LIST_INDICATORS_ACTION_NAME, null, new Variant.strv (list_indicators ()));
+        SimpleAction watch_loaded_indicators_action = new SimpleAction.stateful (WATCH_LOADED_INDICATORS_ACTION_NAME, null, new Variant.strv (list_indicators ()));
 
         IndicatorManager indicator_manager = IndicatorManager.get_default ();
         indicator_manager.indicator_added.connect (() => {
-            list_indicators_action.set_state (new Variant.strv (list_indicators ()));
+            watch_loaded_indicators_action.set_state (new Variant.strv (list_indicators ()));
         });
         indicator_manager.indicator_removed.connect (() => {
-            list_indicators_action.set_state (new Variant.strv (list_indicators ()));
+            watch_loaded_indicators_action.set_state (new Variant.strv (list_indicators ()));
         });
 
         SimpleAction open_indicator_action = new SimpleAction (OPEN_INDICATOR_ACTION_NAME, VariantType.STRING);
@@ -150,7 +181,15 @@ public class Wingpanel.Application : Gtk.Application {
             panel_window.popover_manager.toggle_popover_visible (parameter.get_string ());
         });
 
-        this.add_action (list_indicators_action);
+        watch_loaded_indicators_action.activate.connect ((parameter) => {
+            var indicators = parameter.get_strv ();
+            print ("Available indicators:\n");
+            foreach (string indicator in list_indicators ()) {
+                print ("%s\n", indicator);
+            }
+        });
+
+        this.add_action (watch_loaded_indicators_action);
         this.add_action (open_indicator_action);
         this.add_action (close_indicator_action);
         this.add_action (toggle_indicator_action);

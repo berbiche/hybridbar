@@ -117,7 +117,7 @@ public class Wingpanel.IndicatorManager : GLib.Object {
         /* load indicators */
         var indicators_path = Environment.get_variable("HYBRIDBAR_INDICATORS_PATH");
         if (indicators_path != null) {
-            debug ("Using HYBRIDBAR_INDICATORS_PATH environment variable");
+            info ("Using HYBRIDBAR_INDICATORS_PATH environment variable");
         } else {
             indicators_path = Build.INDICATORS_DIR;
         }

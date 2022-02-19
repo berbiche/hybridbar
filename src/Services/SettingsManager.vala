@@ -73,6 +73,7 @@ namespace Wingpanel.Services {
 			panel_width_changed (panel_gsettings.get_int ("panel-width"), false);
 			panel_position_changed (panel_gsettings.get_string ("panel-position"), false);
 
+			// Queue-up a settings changed when must component had time to initialize
 			GLib.Idle.add (() => {
 				settings_state_changed (settings);
 				return GLib.Source.REMOVE;
