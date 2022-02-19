@@ -189,16 +189,22 @@ public class Wingpanel.IndicatorManager : GLib.Object {
         }
 
         RegisterPluginFunction register_plugin = (RegisterPluginFunction)function;
-        Wingpanel.Indicator? indicator = register_plugin (module, server_type);
+        try {
+            Wingpanel.Indicator? indicator = register_plugin (module, server_type);
 
-        if (indicator == null) {
-            debug ("Unknown plugin type for %s or indicator is hidden on this server!", path);
+            if (indicator == null) {
+                debug ("Unknown plugin type for %s or indicator is hidden on this server!", path);
 
+                return;
+            }
+
+            module.make_resident ();
+            register_indicator (path, indicator);
+        } catch (Error e) {
+            warning ("Failed to load indicator at path: %s", path);
+            warning (e.message);
             return;
         }
-
-        module.make_resident ();
-        register_indicator (path, indicator);
     }
 
     private void find_plugins (File base_folder) {
@@ -286,16 +292,6 @@ public class Wingpanel.IndicatorManager : GLib.Object {
                         allowed_indicators.add (entry);
                     }
                 } else if (file_name.has_suffix (".forbidden")) {
-                    foreach (var entry in get_restrictions_from_file (file)) {
-                        forbidden_indicators.add (entry);
-                    }
-                } else if (file_name.has_suffix (".whitelist")) {
-                    critical ("Using .whitelist files is deprecated and will be removed in next version, please use .allowed instead");
-                    foreach (var entry in get_restrictions_from_file (file)) {
-                        allowed_indicators.add (entry);
-                    }
-                } else if (file_name.has_suffix (".blacklist")) {
-                    critical ("Using .blacklist files is deprecated and will be removed in next version, please use .forbidden instead");
                     foreach (var entry in get_restrictions_from_file (file)) {
                         forbidden_indicators.add (entry);
                     }
