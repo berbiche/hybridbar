@@ -6,15 +6,16 @@
 , ninja
 , vala
 , gtk3
-, hybridbar
-, pantheon # granite
+, pantheon # elementary-gtk-theme elementary-icon-theme
+, libxml2
 , gettext
-, json-glib
 , python3
-, libhandy
+, hybridbar
+, glib
+, libgee
+, libcanberra-gtk3
 , libnotify
 , pulseaudio
-, libcanberra-gtk3
 }:
 
 stdenv.mkDerivation {
@@ -31,18 +32,18 @@ stdenv.mkDerivation {
     python3
     vala
     wrapGAppsHook
+    libxml2
   ];
 
   buildInputs = [
+    gtk3
     hybridbar
+    libcanberra-gtk3
+    libgee
+    libnotify
     pantheon.elementary-gtk-theme
     pantheon.elementary-icon-theme
-    pantheon.granite
-    gtk3
-    libhandy
-    libnotify
     pulseaudio
-    libcanberra-gtk3
   ];
 
   postPatch = ''

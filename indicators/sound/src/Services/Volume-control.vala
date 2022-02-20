@@ -1,7 +1,7 @@
 /*
  * -*- Mode:Vala; indent-tabs-mode:t; tab-width:4; encoding:utf8 -*-
- * Copyright (c) 2013 Canonical Ltd.
- *               2015-2017 elementary LLC. (http://launchpad.net/wingpanel)
+ * Copyright 2013 Canonical Ltd.
+ *           2015-2017 elementary, Inc. (http://launchpad.net/wingpanel)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -462,8 +462,8 @@ public class Sound.Services.VolumeControlPulse : VolumeControl {
         }
 
         var props = new PulseAudio.Proplist ();
-        props.sets (PulseAudio.Proplist.PROP_APPLICATION_NAME, "elementary OS Audio Settings");
-        props.sets (PulseAudio.Proplist.PROP_APPLICATION_ID, "com.github.hcsubser.hybridbar.sound");
+        props.sets (PulseAudio.Proplist.PROP_APPLICATION_NAME, "hybridbar Audio Settings");
+        props.sets (PulseAudio.Proplist.PROP_APPLICATION_ID, "com.github.hcbuser.hybridbar.sound");
         props.sets (PulseAudio.Proplist.PROP_APPLICATION_ICON_NAME, "multimedia-volume-control");
         props.sets (PulseAudio.Proplist.PROP_APPLICATION_VERSION, "0.1");
 

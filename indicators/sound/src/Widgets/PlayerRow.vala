@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2014 Ikey Doherty <ikey.doherty@gmail.com>
- *               2016-2018 elementary, Inc. (https://elementary.io)
+ * Copyright 2014 Ikey Doherty <ikey.doherty@gmail.com>
+ *           2016-2018 elementary, Inc. (https://elementary.io)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 const int ICON_SIZE = 48;
 
 /**
- * A ClientWidget is simply used to control and display information in a two-way
+ * A PlayerRow is simply used to control and display information in a two-way
  * fashion with an underlying MPRIS provider (MediaPlayer2)
  * It is "designed" to be self contained and added to a large UI, enabling multiple
  * MPRIS clients to be controlled with multiple widgets
  */
-public class Sound.Widgets.ClientWidget : Gtk.Grid {
-    private const string NOT_PLAYING = _("Not currently playing");
+public class Sound.Widgets.PlayerRow : Gtk.Grid {
+    private const string NOT_PLAYING = _("Not playing");
 
     public signal void close ();
 
@@ -116,20 +116,20 @@ public class Sound.Widgets.ClientWidget : Gtk.Grid {
     }
 
     /**
-     * Create a new ClientWidget
+     * Create a new PlayerRow
      *
      * @param client The underlying MprisClient instance to use
      */
-    public ClientWidget (Services.MprisClient mpris_client) {
+    public PlayerRow (Services.MprisClient mpris_client) {
         Object (client: mpris_client);
     }
 
     /**
-     * Create a new ClientWidget for bluetooth controls
+     * Create a new PlayerRow for bluetooth controls
      *
      * @param client The underlying MediaPlayer instance to use
      */
-    public ClientWidget.bluetooth (Services.MediaPlayer media_player_client, string name, string icon) {
+    public PlayerRow.bluetooth (Services.MediaPlayer media_player_client, string name, string icon) {
         mp_client = media_player_client;
 
         app_icon = new ThemedIcon (icon);
@@ -141,11 +141,11 @@ public class Sound.Widgets.ClientWidget : Gtk.Grid {
     }
 
     /**
-     * Create a new ClientWidget for the default player
+     * Create a new PlayerRow for the default player
      *
      * @param info The AppInfo of the default music player
      */
-    public ClientWidget.default (AppInfo info) {
+    public PlayerRow.default (AppInfo info) {
         Object (
             app_info: info,
             client: null
@@ -169,14 +169,14 @@ public class Sound.Widgets.ClientWidget : Gtk.Grid {
     }
 
     construct {
-        app_icon = new ThemedIcon ("multimedia-audio-player");
+        app_icon = new ThemedIcon ("application-default-icon");
 
         load_remote_art_cancel = new Cancellable ();
 
         background = new Gtk.Image ();
         background.pixel_size = ICON_SIZE;
 
-        mask = new Gtk.Image.from_resource ("/io/elementary/wingpanel/sound/image-mask.svg");
+        mask = new Gtk.Image.from_resource ("/com/github/hcbuser/hybridbar/sound/image-mask.svg");
         mask.no_show_all = true;
         mask.pixel_size = 48;
 
@@ -428,6 +428,19 @@ public class Sound.Widgets.ClientWidget : Gtk.Grid {
         } else {
             ((Gtk.Image) play_btn.image).icon_name = "media-playback-start-symbolic";
         }
+
+        /**
+         * If a player is no longer playing and doesn't have a desktop info,
+         * hide it since it offers no value to display it. This applies for web
+         * browsers, but in theory any app could have temporary MPRIS playback.
+         */
+        if (client.player.playback_status == "Stopped" && app_info == null) {
+            no_show_all = true;
+            hide ();
+        } else {
+            no_show_all = false;
+            show ();
+        }
     }
 
     /**
@@ -548,7 +561,7 @@ public class Sound.Widgets.ClientWidget : Gtk.Grid {
         var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, mask_size, mask_size);
         var cr = new Cairo.Context (surface);
 
-        //Granite.Drawing.Utilities.cairo_rounded_rectangle (cr, offset_x, offset_y, size, size, mask_offset);
+        cairo_rounded_rectangle (cr, offset_x, offset_y, size, size, mask_offset);
         cr.clip ();
 
         Gdk.cairo_set_source_pixbuf (cr, input, offset_x, offset_y);
@@ -580,5 +593,26 @@ public class Sound.Widgets.ClientWidget : Gtk.Grid {
             title_label.label = title;
             artist_label.label = artist;
         }
+    }
+
+    /**
+     * Inlined from Granite's source code:
+     *   https://github.com/elementary/granite/blob/3db515acc276d3cae366ece048cbf46e998f1f24/lib/Drawing/Utilities.vala#L13-L38
+     * License: LGPL-3.0-or-later
+     */
+    private static void cairo_rounded_rectangle (
+        Cairo.Context cr,
+        double x,
+        double y,
+        double width,
+        double height,
+        double radius
+    ) {
+        cr.move_to (x + radius, y);
+        cr.arc (x + width - radius, y + radius, radius, Math.PI * 1.5, Math.PI * 2);
+        cr.arc (x + width - radius, y + height - radius, radius, 0, Math.PI * 0.5);
+        cr.arc (x + radius, y + height - radius, radius, Math.PI * 0.5, Math.PI);
+        cr.arc (x + radius, y + radius, radius, Math.PI, Math.PI * 1.5);
+        cr.close_path ();
     }
 }

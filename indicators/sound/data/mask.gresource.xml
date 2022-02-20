@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/io/elementary/wingpanel/sound">
+  <gresource prefix="/com/github/hcbuser/hybridbar/sound">
     <file compressed="true" preprocess="xml-stripblanks">image-mask.svg</file>
     <file alias="indicator.css" compressed="true">indicator.css</file>
     <file alias="24x24@2/status/audio-input-microphone-symbolic.svg" compressed="true" preprocess="xml-stripblanks">24/audio-input-microphone-symbolic.svg</file>
