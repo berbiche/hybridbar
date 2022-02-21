@@ -2,6 +2,10 @@
 
 export DIR=$(dirname $(readlink -f "${0}"))
 
+cd "$DIR/bluetooth"
+meson build $1
+ninja -C build install
+
 cd "$DIR/calendar"
 meson build $1
 ninja -C build install

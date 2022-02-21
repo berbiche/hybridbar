@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+	<schema path="/com/github/hcsubser/hybridbar/bluetooth/" id="com.github.hcsubser.hybridbar.bluetooth">
+		<key type="b" name="bluetooth-enabled">
+			<default>true</default>
+			<summary>Sets the last bluetooth state to re-apply on reboot</summary>
+			<description></description>
+		</key>
+		<key type="s" name="menu-command">
+			<default>"blueman-manager"</default>
+			<summary>Sets the command to use to open Bluetooth settings</summary>
+			<description></description>
+		</key>
+	</schema>
+</schemalist>
