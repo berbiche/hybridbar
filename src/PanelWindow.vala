@@ -115,14 +115,17 @@ public class Wingpanel.PanelWindow : Gtk.Window {
     }
 
     private void update_panel_dimensions () {
-        debug ("update_panel_dimensions");
         panel_height = panel.get_allocated_height ();
 
         Gdk.Monitor monitor = get_display ().get_primary_monitor () ?? get_display ().get_monitor (0);
-        Gdk.Rectangle monitor_dimensions = monitor.get_geometry ();
 
-        panel_width = int.min (monitor_dimensions.width, panel_width);
-        panel_height = int.min (monitor_dimensions.height, panel_height);
+        if (monitor != null) {
+            Gdk.Rectangle monitor_dimensions = monitor.get_geometry ();
+            panel_width = int.min (monitor_dimensions.width, panel_width);
+            panel_height = int.min (monitor_dimensions.height, panel_height);
+        } else {
+            debug ("update_panel_dimensions: monitor is null");
+        }
 
         // Whether to expand the window to occupy the full space
         GtkLayerShell.set_anchor (this, GtkLayerShell.Edge.LEFT, panel_width == ANCHOR_TO_EDGES);
