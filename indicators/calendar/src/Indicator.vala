@@ -104,11 +104,11 @@ public class DateTime.Indicator : Wingpanel.Indicator {
             });
 
             settings_button.clicked.connect (() => {
-            	close();
-                if ( (Posix.fork() == 0) ) {
-            		Posix.setsid();
-					Posix.execl("/bin/sh", "/bin/sh", "-c", settings.get_string ("menu-command"),"");
-    			}
+                close();
+                if ( (Posix.fork () == 0) ) {
+                    Posix.setsid ();
+                    Posix.execl ("/bin/sh", "/bin/sh", "-c", settings.get_string ("menu-command"), "");
+                }
             });
         }
 

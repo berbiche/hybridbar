@@ -42,7 +42,7 @@ public class DateTime.Widgets.GridDay : Gtk.EventBox {
 
     static construct {
         provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("/io/elementary/desktop/wingpanel/datetime/GridDay.css");
+        provider.load_from_resource ("com/github/hcbuser/hybridbar/datetime/GridDay.css");
     }
 
     construct {

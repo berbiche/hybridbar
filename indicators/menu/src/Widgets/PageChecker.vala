@@ -37,7 +37,7 @@ public class Slingshot.Widgets.PageChecker : Gtk.Button {
 
     static construct {
         provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("/com/github/hcsubser/hybridbar/menu/PageChecker.css");
+        provider.load_from_resource ("com/github/hcsubser/hybridbar/menu/PageChecker.css");
     }
 
     construct {

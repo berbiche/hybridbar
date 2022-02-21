@@ -63,7 +63,7 @@ public class DateTime.EventRow : Gtk.ListBoxRow {
 
     static construct {
         css_provider = new Gtk.CssProvider ();
-        css_provider.load_from_resource ("/io/elementary/desktop/wingpanel/datetime/EventRow.css");
+        css_provider.load_from_resource ("com/github/hcbuser/hybridbar/datetime/EventRow.css");
 
         time_manager = Services.TimeManager.get_default ();
     }

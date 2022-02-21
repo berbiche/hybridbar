@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/io/elementary/desktop/wingpanel/datetime/">
+  <gresource prefix="/com/github/hcbuser/hybridbar/datetime/">
     <file alias="ControlHeader.css" compressed="true">ControlHeader.css</file>
     <file alias="EventRow.css" compressed="true">EventRow.css</file>
     <file alias="GridDay.css" compressed="true">GridDay.css</file>

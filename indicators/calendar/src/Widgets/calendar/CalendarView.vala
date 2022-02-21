@@ -42,7 +42,7 @@ public class DateTime.Widgets.CalendarView : Gtk.Grid {
         label.width_chars = 13;
 
         var provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("/io/elementary/desktop/wingpanel/datetime/ControlHeader.css");
+        provider.load_from_resource ("com/github/hcbuser/hybridbar/datetime/ControlHeader.css");
 
         var label_style_context = label.get_style_context ();
         label_style_context.add_class ("header-label");
