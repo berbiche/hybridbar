@@ -28,7 +28,7 @@ public class DisplayWidget : Gtk.Grid {
 
     construct {
         var provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("com/github/hcbuser/hybridbar/sound/indicator.css");
+        provider.load_from_resource ("com/github/hcsubser/hybridbar/sound/indicator.css");
 
         var volume_icon = new Gtk.Image ();
         volume_icon.pixel_size = 24;

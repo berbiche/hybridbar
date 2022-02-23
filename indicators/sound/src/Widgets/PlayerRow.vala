@@ -176,7 +176,7 @@ public class Sound.Widgets.PlayerRow : Gtk.Grid {
         background = new Gtk.Image ();
         background.pixel_size = ICON_SIZE;
 
-        mask = new Gtk.Image.from_resource ("/com/github/hcbuser/hybridbar/sound/image-mask.svg");
+        mask = new Gtk.Image.from_resource ("/com/github/hcsubser/hybridbar/sound/image-mask.svg");
         mask.no_show_all = true;
         mask.pixel_size = 48;
 

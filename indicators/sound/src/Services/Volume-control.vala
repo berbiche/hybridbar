@@ -463,7 +463,7 @@ public class Sound.Services.VolumeControlPulse : VolumeControl {
 
         var props = new PulseAudio.Proplist ();
         props.sets (PulseAudio.Proplist.PROP_APPLICATION_NAME, "hybridbar Audio Settings");
-        props.sets (PulseAudio.Proplist.PROP_APPLICATION_ID, "com.github.hcbuser.hybridbar.sound");
+        props.sets (PulseAudio.Proplist.PROP_APPLICATION_ID, "com.github.hcsubser.hybridbar.sound");
         props.sets (PulseAudio.Proplist.PROP_APPLICATION_ICON_NAME, "multimedia-volume-control");
         props.sets (PulseAudio.Proplist.PROP_APPLICATION_VERSION, "0.1");
 
