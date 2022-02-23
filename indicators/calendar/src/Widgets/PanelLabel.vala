@@ -93,7 +93,6 @@ public class DateTime.Widgets.PanelLabel : Gtk.Grid {
         add (time_label);
 
         var clock_settings = new GLib.Settings ("com.github.hcsubser.hybridbar.calendar");
-        clock_settings.bind ("clock-format", this, "clock-format", SettingsBindFlags.DEFAULT);
         clock_settings.bind ("clock-show-seconds", this, "clock-show-seconds", SettingsBindFlags.DEFAULT);
         clock_settings.bind ("clock-show-date", date_revealer, "reveal_child", SettingsBindFlags.DEFAULT);
         clock_settings.bind ("clock-show-weekday", this, "clock-show-weekday", SettingsBindFlags.DEFAULT);
