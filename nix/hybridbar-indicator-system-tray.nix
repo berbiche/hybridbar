@@ -15,11 +15,15 @@
 , indicator-application-gtk3
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "hybridbar-indicator-system-tray";
   version = hybridbar.version;
 
-  src = "${hybridbar.src}/indicators/system-tray";
+  # src = "${hybridbar.src}/indicators/system-tray";
+  src = builtins.path {
+    path = ../indicators/system-tray;
+    name = pname;
+  };
 
   nativeBuildInputs = [
     gettext

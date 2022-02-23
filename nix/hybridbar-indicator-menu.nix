@@ -17,11 +17,15 @@
 , gnome-menus
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "hybridbar-indicator-menu";
   version = hybridbar.version;
 
-  src = "${hybridbar.src}/indicators/menu";
+  # src = "${hybridbar.src}/indicators/menu";
+  src = builtins.path {
+    path = ../indicators/menu;
+    name = pname;
+  };
 
   nativeBuildInputs = [
     gettext

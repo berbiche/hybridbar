@@ -10,17 +10,20 @@
 , pantheon # gala granite
 , gobject-introspection
 , gettext
-, json-glib
 , python3
 , libnma
 , networkmanager
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "hybridbar-indicator-network";
   version = hybridbar.version;
 
-  src = "${hybridbar.src}/indicators/network";
+  # src = "${hybridbar.src}/indicators/network";
+  src = builtins.path {
+    path = ../indicators/network;
+    name = pname;
+  };
 
   nativeBuildInputs = [
     gettext

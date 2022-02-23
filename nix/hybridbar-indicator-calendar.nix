@@ -9,19 +9,21 @@
 , hybridbar
 , pantheon # granite
 , gettext
-, json-glib
 , python3
-
 , evolution-data-server
 , libical
 , libhandy
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "hybridbar-indicator-calendar";
   version = hybridbar.version;
 
-  src = "${hybridbar.src}/indicators/calendar";
+  # src = "${hybridbar.src}/indicators/calendar";
+  src = builtins.path {
+    path = ../indicators/calendar;
+    name = pname;
+  };
 
   nativeBuildInputs = [
     gettext

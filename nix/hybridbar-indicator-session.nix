@@ -9,18 +9,21 @@
 , hybridbar
 , pantheon # gala granite
 , gettext
-, json-glib
 , python3
 , gobject-introspection
 , libhandy
 , accountsservice
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "hybridbar-indicator-session";
   version = hybridbar.version;
 
-  src = "${hybridbar.src}/indicators/session";
+  # src = "${hybridbar.src}/indicators/session";
+  src = builtins.path {
+    path = ../indicators/session;
+    name = pname;
+  };
 
   nativeBuildInputs = [
     gettext

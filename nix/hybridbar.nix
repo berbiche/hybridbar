@@ -33,6 +33,7 @@ stdenv.mkDerivation rec {
       ignoredFiles = [
         "nix"
         "result"
+        "indicators"
       ];
     in ! (builtins.any (p: p == baseNameOf path) ignoredFiles);
   };

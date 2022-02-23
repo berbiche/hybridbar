@@ -18,11 +18,15 @@
 , pulseaudio
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "hybridbar-indicator-sound";
   version = hybridbar.version;
 
-  src = "${hybridbar.src}/indicators/sound";
+  # src = "${hybridbar.src}/indicators/sound";
+  src = builtins.path {
+    path = ../indicators/sound;
+    name = pname;
+  };
 
   nativeBuildInputs = [
     gettext
