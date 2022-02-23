@@ -136,7 +136,7 @@ public class Slingshot.SlingshotView : Gtk.Grid {
         view_selector.margin_end = 12;
         view_selector.append (grid_image);
         view_selector.append (category_image);*/
-        view_selector = new Selector(Gtk.Orientation.HORIZONTAL);
+        view_selector = new Selector (Gtk.Orientation.HORIZONTAL);
         view_selector.margin_end = 6;
         view_selector.margin_start = 6;
 

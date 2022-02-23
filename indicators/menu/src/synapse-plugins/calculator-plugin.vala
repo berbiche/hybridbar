@@ -93,8 +93,8 @@ namespace Synapse {
 
                 try {
                     Process.spawn_async_with_pipes (null, argv, null,
-                    SpawnFlags.SEARCH_PATH,
-                    null, out pid, out write_fd, out read_fd);
+                                                    SpawnFlags.SEARCH_PATH,
+                                                    null, out pid, out write_fd, out read_fd);
                     UnixInputStream read_stream = new UnixInputStream (read_fd, true);
                     DataInputStream bc_output = new DataInputStream (read_stream);
 
